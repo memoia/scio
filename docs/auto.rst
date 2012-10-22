@@ -16,7 +16,7 @@ Then in a source reST document processed by Sphinx, include a declaration like:
 
 .. code-block :: rest
 
-   .. autowsdl: path/to/wsdl_file.wsdl
+   .. autowsdl:: path/to/wsdl_file.wsdl
       :namespace: stuffz
 
 The generated documentation looks like the example below. The classes
