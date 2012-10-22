@@ -158,7 +158,7 @@ class AutoWsdl(Directive):
                     if descr.max == 'unbounded' :
                         msg += " an unlimited number of items."
                     else:
-                        msg += "at most %s items." % descr.max
+                        msg += " at most %s items." % descr.max
                     buf.append('      ', '<autowsdl>')
                     buf.append(msg, '<autowsdl>')
 
@@ -259,5 +259,3 @@ class AutoWsdl(Directive):
 
 def setup(app):
     app.add_directive('autowsdl', AutoWsdl)
-
-
