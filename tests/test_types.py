@@ -1,6 +1,6 @@
 import scio.client as sc
 from lxml import etree
-from nose.tools import assert_almost_equal
+from nose.tools import assert_almost_equal, assert_raises
 
 
 def test_datetime_from_string():
@@ -111,3 +111,26 @@ def test_float_from_string():
     fv = sc.FloatType('2.01')
     assert_almost_equal(fv, 2.01)
 
+
+# meat lovers only, please
+class ToppingEnumType(sc.EnumType):
+    _values = ('PEPPERONI', 'SAUSAGE')
+
+
+def test_enum_from_element():
+    e = etree.Element('Topping')
+    e.text = 'PEPPERONI'
+    et = ToppingEnumType(e)
+    assert et.value == 'PEPPERONI'
+
+
+def test_invalid_enum_value():
+    e = etree.Element('Topping')
+    e.text = 'MUSHROOMS'
+    assert_raises(ValueError, ToppingEnumType, e)
+
+
+def test_nil_enum_value():
+    e = etree.Element('Topping', {'nil': 'true'})
+    et = ToppingEnumType(e)
+    assert et.value is None
