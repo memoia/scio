@@ -601,6 +601,9 @@ class EnumType(Element, Pickleable):
                 pass
             if val in self._values:
                 self.value = val
+            elif val is None:
+                # i.e. original val arg was an empty, nillable element
+                self.value = None
             elif ' ' in val:
                 # enums may be a space-separated list of flags
                 # still only one real value though -- not a true
