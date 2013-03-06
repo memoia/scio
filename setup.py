@@ -20,7 +20,7 @@ else:
 
 setup(
     name='Scio',
-    version='0.12.1',
+    version='0.12.2',
     author_email='oss@leapfrogdevelopment.com',
     url='http://bitbucket.org/leapfrogdevelopment/scio/overview',
     description='Scio is a humane SOAP client',
