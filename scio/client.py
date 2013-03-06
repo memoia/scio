@@ -779,7 +779,7 @@ class ComplexType(Element, Pickleable):
                         self._attributes.append(AnyAttribute(attr))
                     setattr(self, attr, aval)
                 for el in element:
-                    if el.text is not None or non_nil_attrib(el) or len(el):
+                    if el.text is not None or el.attrib or len(el):
                         name = local(el.tag)
                         if name in kids:
                             setattr(self, name, el)
@@ -2189,18 +2189,6 @@ class Schema(object):
 
 def backmap(dct):
     return dict(zip(dct.values(), dct.keys()))
-
-
-def non_nil_attrib(el):
-    attrib_ct = len(el.attrib)
-    if attrib_ct == 0:
-        # no attribs, no non-nil attribs
-        return False
-    elif attrib_ct == 1:
-        # 1 attrib, is it not xsi:nil="true" ?
-        return el.attrib.get('{%s}nil' % NS_XSI) != 'true'
-    else:
-        return True
 
 
 class UnknownType(TypeError):
