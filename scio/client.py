@@ -435,7 +435,10 @@ class SimpleType(Element):
     __metaclass__ = SimpleTypeMeta
     xsi_type = None
     def __new__(cls, *arg, **kw):
-        newarg, newkw = cls.adapt_args(arg, kw)
+        try:
+            newarg, newkw = cls.adapt_args(arg, kw)
+        except InvalidArgs:
+            return None
         base = cls._base_type()
         inst = base.__new__(cls, *newarg, **newkw)
         inst.__init__(*newarg, **newkw)
@@ -475,6 +478,7 @@ class SimpleType(Element):
                 t.__module__ == '__builtin__'):
                 return t
 
+
 class IntType(SimpleType, int):
     xsi_type = (NS_XSD, 'int')
 
@@ -501,6 +505,8 @@ class DateTimeType(SimpleType, datetime):
     @classmethod
     def adapt_args(cls, arg, kw):
         newarg, newkw = SimpleType.adapt_args(arg, kw)
+        if len(newarg) == 0:
+            raise InvalidArgs()
         if len(newarg) == 1:
             try:
                 dt = parse_date(newarg[0])
@@ -526,6 +532,8 @@ class DateType(SimpleType, date):
     @classmethod
     def adapt_args(cls, arg, kw):
         newarg, newkw = SimpleType.adapt_args(arg, kw)
+        if len(newarg) == 0:
+            raise InvalidArgs()
         if len(newarg) == 1:
             try:
                 dt = parse_date(newarg[0])
@@ -771,7 +779,7 @@ class ComplexType(Element, Pickleable):
                         self._attributes.append(AnyAttribute(attr))
                     setattr(self, attr, aval)
                 for el in element:
-                    if el.text is not None or el.attrib or len(el):
+                    if el.text is not None or non_nil_attrib(el) or len(el):
                         name = local(el.tag)
                         if name in kids:
                             setattr(self, name, el)
@@ -2181,5 +2189,21 @@ def backmap(dct):
     return dict(zip(dct.values(), dct.keys()))
 
 
+def non_nil_attrib(el):
+    attrib_ct = len(el.attrib)
+    if attrib_ct == 0:
+        # no attribs, no non-nil attribs
+        return False
+    elif attrib_ct == 1:
+        # 1 attrib, is it not xsi:nil="true" ?
+        return el.attrib.get('{%s}nil' % NS_XSI) != 'true'
+    else:
+        return True
+
+
 class UnknownType(TypeError):
+    pass
+
+
+class InvalidArgs(TypeError):
     pass
