@@ -435,7 +435,10 @@ class SimpleType(Element):
     __metaclass__ = SimpleTypeMeta
     xsi_type = None
     def __new__(cls, *arg, **kw):
-        newarg, newkw = cls.adapt_args(arg, kw)
+        try:
+            newarg, newkw = cls.adapt_args(arg, kw)
+        except InvalidArgs:
+            return None
         base = cls._base_type()
         inst = base.__new__(cls, *newarg, **newkw)
         inst.__init__(*newarg, **newkw)
@@ -475,6 +478,7 @@ class SimpleType(Element):
                 t.__module__ == '__builtin__'):
                 return t
 
+
 class IntType(SimpleType, int):
     xsi_type = (NS_XSD, 'int')
 
@@ -501,6 +505,8 @@ class DateTimeType(SimpleType, datetime):
     @classmethod
     def adapt_args(cls, arg, kw):
         newarg, newkw = SimpleType.adapt_args(arg, kw)
+        if len(newarg) == 0:
+            raise InvalidArgs()
         if len(newarg) == 1:
             try:
                 dt = parse_date(newarg[0])
@@ -526,6 +532,8 @@ class DateType(SimpleType, date):
     @classmethod
     def adapt_args(cls, arg, kw):
         newarg, newkw = SimpleType.adapt_args(arg, kw)
+        if len(newarg) == 0:
+            raise InvalidArgs()
         if len(newarg) == 1:
             try:
                 dt = parse_date(newarg[0])
@@ -999,7 +1007,9 @@ class AttributeDescriptor(object):
             self._set_xml_context(value)
 
         # remember the order in which we saw assignments
-        value._position = obj._child_count
+        if value is not None:
+            value._position = obj._child_count
+            # still bump the child count?
         obj._child_count += 1
 
         # sort of hacky set/append combo
@@ -2182,4 +2192,8 @@ def backmap(dct):
 
 
 class UnknownType(TypeError):
+    pass
+
+
+class InvalidArgs(TypeError):
     pass
