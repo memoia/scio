@@ -1,0 +1,11 @@
+<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <SOAP-ENV:Body>
+    <ns2:getNilDateAndDateTimeResponse xmlns:ns2="http://localhost/wsdl/NilDateService/1/">
+      <ns2:nilDate xsi:nil="true" />
+      <ns2:nilDateTime xsi:nil="true" />
+      <ns2:niceDate>1955-11-05</ns2:niceDate>
+      <ns2:niceDateTime>1955-11-12T22:04:00</ns2:niceDateTime>
+      <ns2:niceNilDate xsi:nil="true" nice="false" />
+    </ns2:getNilDateAndDateTimeResponse>
+  </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>
