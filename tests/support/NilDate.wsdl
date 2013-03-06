@@ -1,0 +1,94 @@
+<definitions
+    xmlns="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+    xmlns:tns="http://localhost/wsdl/NilDateService/1/"
+    xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+    targetNamespace="http://localhost/wsdl/NilDateService/1/"
+    name="NilDateService">
+<types>
+  <xsd:schema targetNamespace="http://localhost/wsdl/NilDateService/1/">
+    <xsd:element name="getNilDate" type="xsd:string"/>
+    <xsd:element name="getNilDateResponse" type="xsd:date" nillable="true"/>
+    <xsd:element name="getNilDateTime" type="xsd:string"/>
+    <xsd:element name="getNilDateTimeResponse" type="xsd:dateTime" nillable="true"/>
+    <xsd:element name="getNilDateAndDateTime" type="xsd:string"/>
+    <xsd:complexType name="nilDateAndDateTime">
+      <xsd:sequence>
+        <xsd:element name="nilDate" minOccurs="0" type="xsd:date" nillable="true"/>
+        <xsd:element name="nilDateTime" minOccurs="0" type="xsd:dateTime" nillable="true"/>
+        <xsd:element name="niceDate" minOccurs="0" type="xsd:date" nillable="true"/>
+        <xsd:element name="niceDateTime" minOccurs="0" type="xsd:dateTime" nillable="true"/>
+      </xsd:sequence>
+    </xsd:complexType>
+    <xsd:element name="getNilDateAndDateTimeResponse" type="nilDateAndDateTime"/>
+  </xsd:schema>
+</types>
+<message name="NilDateRequest">
+  <part element="tns:getNilDate" name="part1"/>
+</message>
+<message name="NilDateResponse">
+  <part element="tns:getNilDateResponse" name="date"/>
+</message>
+<message name="NilDateTimeRequest">
+  <part element="tns:getNilDateTime" name="part1"/>
+</message>
+<message name="NilDateTimeResponse">
+  <part element="tns:getNilDateTimeResponse" name="date"/>
+</message>
+<message name="NilDateAndDateTimeRequest">
+  <part element="tns:getNilDateAndDateTime" name="part1"/>
+</message>
+<message name="NilDateAndDateTimeResponse">
+  <part element="tns:getNilDateAndDateTimeResponse" name="date"/>
+</message>
+<portType name="NilDateServicePT">
+  <operation name="getNilDate">
+    <input message="tns:NilDateRequest" name="input1"/>
+    <output message="tns:NilDateResponse" name="output1"/>
+  </operation>
+  <operation name="getNilDateTime">
+    <input message="tns:NilDateTimeRequest" name="input2"/>
+    <output message="tns:NilDateTimeResponse" name="output2"/>
+  </operation>
+  <operation name="getNilDateAndDateTime">
+    <input message="tns:NilDateAndDateTimeRequest" name="input3"/>
+    <output message="tns:NilDateAndDateTimeResponse" name="output3"/>
+  </operation>
+</portType>
+<binding name="NilDateServiceBinding" type="tns:NilDateServicePT">
+  <soap:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+  <operation name="getNilDate">
+    <soap:operation soapAction="http://localhost/NilDateService" />
+    <input name="input1">
+      <soap:body use="literal"/>
+    </input>
+    <output name="output1">
+      <soap:body use="literal"/>
+    </output>
+  </operation>
+  <operation name="getNilDateTime">
+    <soap:operation soapAction="http://localhost/NilDateService" />
+    <input name="input2">
+      <soap:body use="literal"/>
+    </input>
+    <output name="output2">
+      <soap:body use="literal"/>
+    </output>
+  </operation>
+  <operation name="getNilDateAndDateTime">
+    <soap:operation soapAction="http://localhost/NilDateService" />
+    <input name="input3">
+      <soap:body use="literal"/>
+    </input>
+    <output name="output3">
+      <soap:body use="literal"/>
+    </output>
+  </operation>
+</binding>
+<service name="NilDateService">
+  <port name="NilDateServicePort" binding="tns:NilDateServiceBinding">
+    <soap:address location="http://localhost/NilDateService"/>
+  </port>
+</service>
+</definitions>
