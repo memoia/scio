@@ -19,6 +19,7 @@
         <xsd:element name="nilDateTime" minOccurs="0" type="xsd:dateTime" nillable="true"/>
         <xsd:element name="niceDate" minOccurs="0" type="xsd:date" nillable="true"/>
         <xsd:element name="niceDateTime" minOccurs="0" type="xsd:dateTime" nillable="true"/>
+        <xsd:element name="niceNilDate" minOccurs="0" type="xsd:dateTime" nillable="true"/>
       </xsd:sequence>
     </xsd:complexType>
     <xsd:element name="getNilDateAndDateTimeResponse" type="nilDateAndDateTime"/>

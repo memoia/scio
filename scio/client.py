@@ -1007,7 +1007,9 @@ class AttributeDescriptor(object):
             self._set_xml_context(value)
 
         # remember the order in which we saw assignments
-        value._position = obj._child_count
+        if value is not None:
+            value._position = obj._child_count
+            # still bump the child count?
         obj._child_count += 1
 
         # sort of hacky set/append combo

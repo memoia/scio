@@ -40,8 +40,12 @@ def test_nil_simple_datetime():
 
 def test_deserialize_complex_nil_response():
     resp = client.service.getNilDateAndDateTime('foo')
+
+    # regular nils are nil
     assert resp.nilDate is None
     assert resp.nilDateTime is None
+
+    # regular non-nils are sane
     assert resp.niceDate.year == 1955
     assert resp.niceDate.month == 11
     assert resp.niceDate.day == 5
@@ -51,3 +55,6 @@ def test_deserialize_complex_nil_response():
     assert resp.niceDateTime.hour == 22
     assert resp.niceDateTime.minute == 4
     assert resp.niceDateTime.second == 0
+
+    # nils with other attrs are nil
+    assert resp.niceNilDate is None
