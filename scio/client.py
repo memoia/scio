@@ -558,9 +558,13 @@ class TimeType(SimpleType, time):
     def adapt_args(cls, arg, kw):
         newarg, newkw = SimpleType.adapt_args(arg, kw)
         if len(newarg) == 1:
-            dt = parse_date(newarg[0])
-            # microsecond always 0
-            newarg = (dt.hour, dt.minute, dt.second, 0, dt.tzinfo)
+            try:
+                dt = parse_date(newarg[0])
+                # microsecond always 0
+                newarg = (dt.hour, dt.minute, dt.second, 0, dt.tzinfo)
+            except ValueError:
+                # may be binary time 'string' from a pickle, let it through
+                pass
         return newarg, newkw
 
     def __str__(self):

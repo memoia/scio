@@ -2,6 +2,8 @@ import scio.client as sc
 from lxml import etree
 from nose.tools import assert_almost_equal, assert_raises
 
+from cPickle import dumps, loads
+
 
 def test_datetime_from_string():
     dt = sc.DateTimeType('2009-01-01T00:00:00')
@@ -89,6 +91,18 @@ def test_time_from_element():
     assert not dt.microsecond
     assert not dt.utcoffset()
     assert str(dt) == '06:15:21'
+
+
+def test_time_unpickles():
+    dt = sc.TimeType('06:51:21')
+    print dt
+    dt = loads(dumps(dt))
+    print dt
+    assert dt.hour == 6
+    assert dt.minute == 51
+    assert dt.second == 21
+    assert not dt.microsecond
+    assert str(dt) == '06:51:21'
 
 
 def test_time_with_timezone():
