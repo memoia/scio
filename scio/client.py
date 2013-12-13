@@ -558,9 +558,13 @@ class TimeType(SimpleType, time):
     def adapt_args(cls, arg, kw):
         newarg, newkw = SimpleType.adapt_args(arg, kw)
         if len(newarg) == 1:
-            dt = parse_date(newarg[0])
-            # microsecond always 0
-            newarg = (dt.hour, dt.minute, dt.second, 0, dt.tzinfo)
+            try:
+                dt = parse_date(newarg[0])
+                # microsecond always 0
+                newarg = (dt.hour, dt.minute, dt.second, 0, dt.tzinfo)
+            except ValueError:
+                # may be binary time 'string' from a pickle, let it through
+                pass
         return newarg, newkw
 
     def __str__(self):
@@ -1027,7 +1031,13 @@ class AttributeDescriptor(object):
         delattr(obj, '_%s_' % self.name)
 
     def _new(self, value):
-        val = self.type(value)
+        real_type = self.type
+        if hasattr(self.type, '_resolver'):
+            xt = xsi_type(value)
+            if xt:
+                if hasattr(self.type, '_typemap') and xt not in self.type._typemap:
+                    real_type = self.type._resolver._find(xsi_type(value))
+        val = real_type(value)
         self._set_xml_context(val)
         return val
 
@@ -2118,6 +2128,8 @@ def local_attr(attr):
 def xsi_type(element):
     # Types and their values are generally namespaced, but we don't
     # want the namespaces here.
+    if not hasattr(element, 'attrib'):
+        return None
     for key, val in element.attrib.items():
         if local(key) == 'type':
             return local_attr(val)

@@ -1,3 +1,15 @@
+0.12.5
+
+- Avoid errors on nil date/datetime elements
+- Debug logging of fault XML
+- Handle cases where an element's xsi:type is not the same as its xsd:type
+- Handle unknown string format ValueError on unpickling TimeType objects
+
+0.12.1
+
+- Interpret empty (nil) elements for enum types as None
+  rather than raising a ValueError.
+
 0.12
 
 - Support top-level WSDL imports
