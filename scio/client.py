@@ -106,11 +106,18 @@ class Client(object):
                             The ``proto`` parameter will only be used for
                             a number of basic types, including int
                             and arrays (list).
+    :param port_locations: A dictionary mapping services/ports to locations
+                           for use in overriding locations specified in
+                           the given wsdl. Format::
+
+                             port_overrides = {
+                                'service_name:port_name': 'override_location',
+                             }
     """
     def __init__(self, wsdl_fp, transport=None,
                  service_class=None, type_class=None,
-                 reduce_callback=None):
-        self.wsdl = Factory(wsdl_fp)
+                 reduce_callback=None, port_locations=None):
+        self.wsdl = Factory(wsdl_fp, port_locations)
         if transport is None:
             transport = urlopen
         if service_class is None:
@@ -1319,9 +1326,10 @@ class Factory(object):
     _cplx_type_tag = '{%s}complexType' % NS_XSD
     _wsdl_import_tag = '{%s}import' % NS_WSDL
 
-    def __init__(self, wsdl_file):
+    def __init__(self, wsdl_file, port_locations=None):
         self.wsdl = etree.parse(wsdl_file).getroot()
         self.nsmap = NSStack(self.wsdl)
+        self.port_locations = port_locations if port_locations else {}
         self._imports = {}
         self._methods = dict(message={},
                              binding={},
@@ -1460,7 +1468,8 @@ class Factory(object):
             for port in service.findall('.//{%s}port' % NS_WSDL):
                 if not self._is_soap_port(port):
                     continue
-                self._process_port(client, port)
+                port_key = ':'.join([service.get('name'), port.get('name')])
+                self._process_port(client, port, port_key)
 
     def _is_soap_port(self, port):
         soap_ns = (NS_SOAP, NS_SOAP12)
@@ -1469,9 +1478,10 @@ class Factory(object):
                 return True
         return False
 
-    def _process_port(self, client, port):
+    def _process_port(self, client, port, port_location_key=None):
         service = client.service
-        location = port[0].get('location')
+        alt_location = self.port_locations.get(port_location_key)
+        location = alt_location if alt_location else port[0].get('location')
         binding_name = local_attr(port.get('binding'))
         binding = self._binding(binding_name)
         style = self._binding_style(binding)

@@ -28,6 +28,7 @@ from __future__ import with_statement
 import logging
 import os
 import sys
+import json
 
 import jinja2
 
@@ -49,8 +50,13 @@ def main():
     """
     logging.basicConfig(level=logging.DEBUG)
     for wsdl_file in sys.argv[1:]:
+        metadata = {}
+        metadata_path = '.'.join((wsdl_file, 'json'))
+        if os.path.exists(metadata_path):
+            with open(metadata_path, 'r') as fh:
+                metadata = json.load(metadata_path)
         with open(wsdl_file, 'r') as fh:
-            client = scio.client.Client(fh)
+            client = scio.client.Client(fh, port_locations=metadata.get('port_locations'))
             print gen(client)
 
 
